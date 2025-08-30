@@ -52,10 +52,32 @@ object CircularDependencyAnalyzer {
      */
     fun isPartOfCircularDependency(element: PsiElement): Boolean {
         val project = element.project
+        
+        // Get the type of the element we're checking
+        val elementType = when (element) {
+            is KtClass -> element.name
+            is KtProperty -> element.typeReference?.text
+            is KtParameter -> element.typeReference?.text
+            else -> {
+                // Try to find the containing class or property
+                val containingClass = element.parent as? KtClass ?: 
+                                    PsiTreeUtil.getParentOfType(element, KtClass::class.java)
+                val containingProperty = element.parent as? KtProperty ?: 
+                                       PsiTreeUtil.getParentOfType(element, KtProperty::class.java)
+                
+                when {
+                    containingClass != null -> containingClass.name
+                    containingProperty != null -> containingProperty.typeReference?.text
+                    else -> null
+                }
+            }
+        } ?: return false
+        
+        val normalizedType = normalizeType(elementType)
         val circularDependencies = findCircularDependencies(project)
         
         return circularDependencies.any { cycle ->
-            cycle.elements.contains(element)
+            cycle.containsType(normalizedType)
         }
     }
 
@@ -116,8 +138,8 @@ object CircularDependencyAnalyzer {
                 DependencyNode(normalizedClassName, ktClass)
             }
             
-            // Only add dependencies from injected properties (by di) - NOT constructor parameters
-            // Constructor parameters are not dependencies unless they're also injected elsewhere
+            // ONLY add dependencies from injected properties (by di)
+            // Constructor parameters are NOT dependencies - they're just constructor parameters
             PsiTreeUtil.findChildrenOfType(ktClass, KtProperty::class.java).forEach { property ->
                 if (isInjectedProperty(property)) {
                     val propertyType = property.typeReference?.text
@@ -125,34 +147,29 @@ object CircularDependencyAnalyzer {
                         val normalizedPropertyType = normalizeType(propertyType)
                         classNode.dependencies.add(normalizedPropertyType)
                         
-                        // Ensure the dependency type has a node (even if empty)
-                        nodes.putIfAbsent(normalizedPropertyType, DependencyNode(normalizedPropertyType, property))
+                        // Ensure the dependency type has a node (even if it doesn't have dependencies yet)
+                        if (!nodes.containsKey(normalizedPropertyType)) {
+                            nodes[normalizedPropertyType] = DependencyNode(normalizedPropertyType, property)
+                        }
                     }
                 }
             }
         }
         
-        // Also check for constructor parameters with @Provides annotation
+        // Register constructor parameters with @Provides as providers, but they don't have dependencies
+        // This allows them to be PROVIDED TO other classes, but they don't DEPEND ON anything
         ktClass.primaryConstructor?.valueParameters?.forEach { param ->
             val hasProvides = param.annotationEntries.any { it.shortName?.asString() == "Provides" }
             if (hasProvides) {
                 val paramType = param.typeReference?.text
                 if (paramType != null) {
                     val normalizedParamType = normalizeType(paramType)
-                    val paramNode = nodes.getOrPut(normalizedParamType) {
+                    // Create a node for this parameter provider (but no dependencies)
+                    nodes.getOrPut(normalizedParamType) {
                         DependencyNode(normalizedParamType, param)
                     }
-                    
-                    // Add dependencies of the containing class to this parameter
-                    PsiTreeUtil.findChildrenOfType(ktClass, KtProperty::class.java).forEach { property ->
-                        if (isInjectedProperty(property)) {
-                            val propertyType = property.typeReference?.text
-                            if (propertyType != null) {
-                                val normalizedPropertyType = normalizeType(propertyType)
-                                paramNode.dependencies.add(normalizedPropertyType)
-                            }
-                        }
-                    }
+                    // Note: Constructor parameters don't add dependencies to their containing class
+                    // They are just providers of their type, nothing more
                 }
             }
         }
@@ -170,18 +187,23 @@ object CircularDependencyAnalyzer {
      */
     private fun detectCycles(graph: Map<String, DependencyNode>): List<CircularDependency> {
         val visited = mutableSetOf<String>()
-        val recursionStack = mutableSetOf<String>()
         val cycles = mutableListOf<CircularDependency>()
         
-        for (node in graph.keys) {
-            if (node !in visited) {
+        // Try DFS from each unvisited node
+        for (startNode in graph.keys) {
+            if (startNode !in visited) {
+                val recursionStack = mutableSetOf<String>()
                 val path = mutableListOf<String>()
                 val elements = mutableListOf<PsiElement>()
-                findCyclesFromNode(node, graph, visited, recursionStack, path, elements, cycles)
+                findCyclesFromNode(startNode, graph, visited, recursionStack, path, elements, cycles)
             }
         }
         
-        return cycles
+        // Remove duplicate cycles (same cycle detected from different starting points)
+        return cycles.distinctBy { cycle ->
+            val sortedCycle = cycle.cycle.sorted()
+            sortedCycle.joinToString("->")
+        }
     }
 
     /**
@@ -205,8 +227,11 @@ object CircularDependencyAnalyzer {
             elements.add(currentNode.element)
             
             for (dependency in currentNode.dependencies) {
-                if (dependency in recursionStack) {
-                    // Found a cycle
+                if (dependency == current) {
+                    // Self-dependency - create a simple cycle
+                    cycles.add(CircularDependency(listOf(current, current), listOf(currentNode.element)))
+                } else if (dependency in recursionStack) {
+                    // Found a cycle - trace back to where the cycle starts
                     val cycleStartIndex = path.indexOf(dependency)
                     if (cycleStartIndex >= 0) {
                         val cyclePath = path.subList(cycleStartIndex, path.size) + dependency

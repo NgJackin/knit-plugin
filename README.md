@@ -1,5 +1,15 @@
 # knit-plugin
 
+## Table of Contents
+- [Description](#description)
+- [Installation](#installation)
+- [Current Features](#current-features)
+- [Planned Features for Future Releases](#planned-features-for-future-releases)
+- [Tools and Libraries Used](#tools-and-libraries-used)
+
+## Description
+Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for projects using the Knit Dependency Injection (DI) framework. It offers features such as inline annotations, automatic detection of new files and classes, and circular dependency detection to help developers manage their dependencies more effectively.
+
 ## Installation
 
 - Using the IDE built-in plugin system:
@@ -44,6 +54,22 @@
 - Automatic refactoring for Providers and Injections when Providers are renamed or updated.
 - Ensure that users will be prompted to remove all affected Injections when Providers are deleted.
 - Other refactoring features to resolve common errors related to Providers and Injections (e.g. injecting a private provider in a different class).
+
+
+## Tools and Libraries Used
+- [![IntelliJ IDEA][intellij-logo]][intellij-url]
+- [![Kotlin][kotlin-logo]][kotlin-url]
+- [![JetBrains Plugin DevKit][devkit-logo]][devkit-url]
+
+
+[intellij-logo]: https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white
+[intellij-url]: https://www.jetbrains.com/idea/
+
+[kotlin-logo]: https://img.shields.io/badge/Kotlin-0095D5.svg?style=for-the-badge&logo=kotlin&logoColor=white
+[kotlin-url]: https://kotlinlang.org/
+
+[devkit-logo]: https://img.shields.io/badge/JetBrains%20Plugin%20DevKit-000000.svg?style=for-the-badge&logo=jetbrains&logoColor=white
+[devkit-url]: https://plugins.jetbrains.com/docs/intellij/plugin-development.html
 
 ---
 Plugin based on the [IntelliJ Platform Plugin Template][template].

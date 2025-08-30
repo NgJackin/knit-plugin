@@ -1,18 +1,22 @@
 # Unused Provider Detection Feature
 
 ## Overview
+
 This feature automatically detects `@Provides` annotations that are not being used anywhere in the project and offers quick fixes to clean them up.
 
 ## What Gets Detected
 
 ### ✅ **Unused Providers** (Will be flagged)
+
 1. **Classes with @Provides** that are never injected:
+
    ```kotlin
    @Provides
    class UnusedService  // No 'by di' usages found
    ```
 
 2. **Constructor parameters with @Provides** that are never injected:
+
    ```kotlin
    class SomeService(
        @Provides val unusedConfig: String  // No 'by di' usages found
@@ -26,6 +30,7 @@ This feature automatically detects `@Provides` annotations that are not being us
    ```
 
 ### ❌ **Used Providers** (Will NOT be flagged)
+
 ```kotlin
 @Provides
 class UserService  // Used below
@@ -40,11 +45,13 @@ class Controller {
 When you click on an unused provider warning, you get **two quick fix options**:
 
 ### 1. **Remove @Provides annotation**
+
 - Removes only the `@Provides` annotation
 - Keeps the class/property/parameter intact
 - Use when you want to keep the code but remove DI capability
 
 ### 2. **Remove entire provider**
+
 - Removes the entire class/property/parameter
 - Use when the provider is completely unnecessary
 

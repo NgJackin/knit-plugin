@@ -43,17 +43,20 @@ class MyToolWindowFactory : ToolWindowFactory {
             contentPanel.add(JLabel("This plugin helps identify:"))
             contentPanel.add(JLabel("• @Provides annotations (Producers)"))
             contentPanel.add(JLabel("• by di delegations (Consumers)"))
+            contentPanel.add(JLabel("• Circular dependencies (⚠️ Warnings)"))
             contentPanel.add(Box.createVerticalStrut(10))
             
             contentPanel.add(JLabel("Legend:"))
             contentPanel.add(JLabel("🟢 P = Producer (provides dependencies)"))
             contentPanel.add(JLabel("🔵 C = Consumer (consumes dependencies)"))
+            contentPanel.add(JLabel("⚠️ = Circular dependency detected"))
             contentPanel.add(Box.createVerticalStrut(10))
             
             contentPanel.add(JLabel("Features:"))
             contentPanel.add(JLabel("• Syntax highlighting for DI patterns"))
             contentPanel.add(JLabel("• Gutter icons for quick identification"))
             contentPanel.add(JLabel("• Inspections for missing providers"))
+            contentPanel.add(JLabel("• Circular dependency detection & warnings"))
             
             add(contentPanel, BorderLayout.CENTER)
         }

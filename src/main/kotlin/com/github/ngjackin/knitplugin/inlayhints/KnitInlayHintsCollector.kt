@@ -1,5 +1,6 @@
 package com.github.ngjackin.knitplugin.inlayhints
 
+import com.github.ngjackin.knitplugin.analysis.CircularDependencyAnalyzer
 import com.intellij.codeInsight.hints.FactoryInlayHintsCollector
 import com.intellij.codeInsight.hints.InlayHintsSink
 import com.intellij.codeInsight.hints.presentation.InlayPresentation
@@ -22,7 +23,14 @@ class KnitInlayHintsCollector(editor: Editor) : FactoryInlayHintsCollector(edito
 
     private fun collectProvidesHints(annotation: KtAnnotationEntry, sink: InlayHintsSink) {
         if (annotation.shortName?.asString() == "Provides") {
-            val hint = factory.text(" 🟢 Producer")
+            // Check if this provider is part of a circular dependency
+            val isCircular = CircularDependencyAnalyzer.isPartOfCircularDependency(annotation)
+            
+            val hint = if (isCircular) {
+                factory.text(" ⚠️ Producer (Circular!)")
+            } else {
+                factory.text(" 🟢 Producer")
+            }
             sink.addInlineElement(annotation.textRange.endOffset, false, hint, false)
         }
     }
@@ -36,10 +44,12 @@ class KnitInlayHintsCollector(editor: Editor) : FactoryInlayHintsCollector(edito
                 
                 if (propertyType != null && containingClass != null) {
                     val hasProvider = hasProviderForType(containingClass, propertyType)
-                    val hint = if (hasProvider) {
-                        factory.text(" 🔵 Injected")
-                    } else {
-                        factory.text(" ❌ No provider")
+                    val isCircular = CircularDependencyAnalyzer.isPartOfCircularDependency(property)
+                    
+                    val hint = when {
+                        isCircular -> factory.text(" ⚠️ Circular dependency!")
+                        hasProvider -> factory.text(" 🔵 Injected")
+                        else -> factory.text(" ❌ No provider")
                     }
                     sink.addInlineElement(delegateExpression.textRange.endOffset, false, hint, false)
                 }
@@ -52,7 +62,14 @@ class KnitInlayHintsCollector(editor: Editor) : FactoryInlayHintsCollector(edito
         if (hasProvides) {
             val nameIdentifier = ktClass.nameIdentifier
             if (nameIdentifier != null) {
-                val hint = factory.text(" 🏭 Injectable")
+                // Check if this class is part of a circular dependency
+                val isCircular = CircularDependencyAnalyzer.isPartOfCircularDependency(ktClass)
+                
+                val hint = if (isCircular) {
+                    factory.text(" ⚠️ Injectable (Circular!)")
+                } else {
+                    factory.text(" 🏭 Injectable")
+                }
                 sink.addInlineElement(nameIdentifier.textRange.endOffset, false, hint, false)
             }
         }
@@ -63,7 +80,14 @@ class KnitInlayHintsCollector(editor: Editor) : FactoryInlayHintsCollector(edito
             if (hasProvides) {
                 val nameIdentifier = parameter.nameIdentifier
                 if (nameIdentifier != null) {
-                    val hint = factory.text(" 🔧 Provides")
+                    // Check if this parameter is part of a circular dependency
+                    val isCircular = CircularDependencyAnalyzer.isPartOfCircularDependency(parameter)
+                    
+                    val hint = if (isCircular) {
+                        factory.text(" ⚠️ Provides (Circular!)")
+                    } else {
+                        factory.text(" 🔧 Provides")
+                    }
                     sink.addInlineElement(nameIdentifier.textRange.endOffset, false, hint, false)
                 }
             }

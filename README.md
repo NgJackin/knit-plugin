@@ -8,7 +8,7 @@
 - [Tools and Libraries Used](#tools-and-libraries-used)
 
 ## Description
-Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for projects using the Knit Dependency Injection (DI) framework. It offers features such as inline annotations, automatic detection of new files and classes, and circular dependency detection to help developers manage their dependencies more effectively.
+Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for projects using the Knit Dependency Injection (DI) framework. It offers features such as inline warnings, automatic detection of new files and classes, and circular dependency detection to help developers manage their dependencies more effectively.
 
 ## Build and Installation
 
@@ -25,9 +25,11 @@ Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for project
 
 ## Current Features
 
-### Inline Annotation
+### Gutter Icons and Inline Warnings
 - Providers and Injections have their own gutter icons for easy identification.
-- More information about Providers / Injections will be shown when hovering over / clicking the gutter icon.
+- More information about Providers / Injections will be shown when hovering over the gutter icon.
+  - Clicking a Producer's gutter icon will navigate to all Injections of that Provider.
+  - Clicking an Injection's gutter icon will navigate to the corresponding Provider.
 - Warnings will be have their own inline annotations to alert the user of potential issues.
 
 ### Automatic Detection of New Files and Classes
@@ -35,7 +37,7 @@ Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for project
 
 ### Circular Dependency Detection
 - Provider and Injections will be stored and analysed to detect any circular dependencies which will cause runtime errors. 
-- Providers / Injections involved in circular dependencies will have inline annotations in the editor to alert the user.
+- Providers / Injections involved in circular dependencies will have inline warnings in the editor to alert the user.
 
 ## Planned Features for Future Releases
 

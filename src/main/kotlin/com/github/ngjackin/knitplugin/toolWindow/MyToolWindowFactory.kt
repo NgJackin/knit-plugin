@@ -40,8 +40,9 @@ class MyToolWindowFactory : ToolWindowFactory {
 
             // Add information about the plugin
             contentPanel.add(JLabel("This plugin helps identify:"))
-            contentPanel.add(JLabel("<html>• <code>@Provides</code> annotations (Producers)</html>"))
-            contentPanel.add(JLabel("<html>• <code>by di</code> delegations (Consumers)</html>"))
+            contentPanel.add(JLabel("• @Provides annotations (Producers)"))
+            contentPanel.add(JLabel("• by di delegations (Consumers)"))
+            contentPanel.add(JLabel("• Circular dependencies (⚠️ Warnings)"))
             contentPanel.add(Box.createVerticalStrut(10))
 
 
@@ -49,15 +50,17 @@ class MyToolWindowFactory : ToolWindowFactory {
             val consumerIcon = AllIcons.General.Locate
 
             contentPanel.add(JLabel("Legend:"))
-            contentPanel.add(JLabel(" Producer (provides dependencies)", providerIcon, SwingConstants.LEADING))
-            contentPanel.add(JLabel(" Consumer (consumes dependencies)", consumerIcon, SwingConstants.LEADING))
+            contentPanel.add(JLabel("🟢 P = Producer (provides dependencies)"))
+            contentPanel.add(JLabel("🔵 C = Consumer (consumes dependencies)"))
+            contentPanel.add(JLabel("⚠️ = Circular dependency detected"))
             contentPanel.add(Box.createVerticalStrut(10))
 
 
             contentPanel.add(JLabel("Features:"))
-            contentPanel.add(JLabel("• Circular Dependency Detection"))
-            contentPanel.add(JLabel("• Gutter Icons and Inline Warnings for quick identification"))
-            contentPanel.add(JLabel("• Automatic Detection of New Files and Classes added to Project"))
+            contentPanel.add(JLabel("• Syntax highlighting for DI patterns"))
+            contentPanel.add(JLabel("• Gutter icons for quick identification"))
+            contentPanel.add(JLabel("• Inspections for missing providers"))
+            contentPanel.add(JLabel("• Circular dependency detection & warnings"))
             
             add(contentPanel, BorderLayout.CENTER)
         }

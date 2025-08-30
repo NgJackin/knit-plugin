@@ -16,7 +16,7 @@ version = providers.gradleProperty("pluginVersion").get()
 
 // Set the JVM language level used to build the project.
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
 // Configure project's dependencies
@@ -87,6 +87,9 @@ intellijPlatform {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
         }
     }
+
+    // Disable instrumentation to avoid JDK path issues
+    instrumentCode = false
 
     signing {
         certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN")

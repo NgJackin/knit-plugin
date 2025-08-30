@@ -5,13 +5,11 @@ import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
-import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.content.ContentFactory
-import com.github.ngjackin.knitplugin.MyBundle
 import com.github.ngjackin.knitplugin.services.MyProjectService
-import javax.swing.JButton
-
+import javax.swing.*
+import java.awt.BorderLayout
 
 class MyToolWindowFactory : ToolWindowFactory {
 
@@ -20,26 +18,44 @@ class MyToolWindowFactory : ToolWindowFactory {
     }
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val myToolWindow = MyToolWindow(toolWindow)
-        val content = ContentFactory.getInstance().createContent(myToolWindow.getContent(), null, false)
+        val myToolWindow = KnitToolWindow(toolWindow)
+        val content = ContentFactory.getInstance().createContent(myToolWindow.getContent(), "Knit DI", false)
         toolWindow.contentManager.addContent(content)
     }
 
     override fun shouldBeAvailable(project: Project) = true
 
-    class MyToolWindow(toolWindow: ToolWindow) {
+    class KnitToolWindow(toolWindow: ToolWindow) {
 
         private val service = toolWindow.project.service<MyProjectService>()
 
         fun getContent() = JBPanel<JBPanel<*>>().apply {
-            val label = JBLabel(MyBundle.message("randomLabel", "?"))
-
-            add(label)
-            add(JButton(MyBundle.message("shuffle")).apply {
-                addActionListener {
-                    label.text = MyBundle.message("randomLabel", service.getRandomNumber())
-                }
-            })
+            layout = BorderLayout()
+            
+            val titleLabel = JLabel("Knit Dependency Injection", SwingConstants.CENTER)
+            titleLabel.font = titleLabel.font.deriveFont(16f)
+            add(titleLabel, BorderLayout.NORTH)
+            
+            val contentPanel = JPanel()
+            contentPanel.layout = BoxLayout(contentPanel, BoxLayout.Y_AXIS)
+            
+            // Add information about the plugin
+            contentPanel.add(JLabel("This plugin helps identify:"))
+            contentPanel.add(JLabel("• @Provides annotations (Producers)"))
+            contentPanel.add(JLabel("• by di delegations (Consumers)"))
+            contentPanel.add(Box.createVerticalStrut(10))
+            
+            contentPanel.add(JLabel("Legend:"))
+            contentPanel.add(JLabel("🟢 P = Producer (provides dependencies)"))
+            contentPanel.add(JLabel("🔵 C = Consumer (consumes dependencies)"))
+            contentPanel.add(Box.createVerticalStrut(10))
+            
+            contentPanel.add(JLabel("Features:"))
+            contentPanel.add(JLabel("• Syntax highlighting for DI patterns"))
+            contentPanel.add(JLabel("• Gutter icons for quick identification"))
+            contentPanel.add(JLabel("• Inspections for missing providers"))
+            
+            add(contentPanel, BorderLayout.CENTER)
         }
     }
 }

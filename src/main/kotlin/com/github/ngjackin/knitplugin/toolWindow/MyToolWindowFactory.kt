@@ -45,13 +45,9 @@ class MyToolWindowFactory : ToolWindowFactory {
             contentPanel.add(JLabel("• Circular dependencies (⚠️ Warnings)"))
             contentPanel.add(Box.createVerticalStrut(10))
 
-
-            val providerIcon = AllIcons.General.Add
-            val consumerIcon = AllIcons.General.Locate
-
             contentPanel.add(JLabel("Legend:"))
-            contentPanel.add(JLabel("🟢 P = Producer (provides dependencies)"))
-            contentPanel.add(JLabel("🔵 C = Consumer (consumes dependencies)"))
+            contentPanel.add(JLabel(" Producer (provides dependencies)", AllIcons.General.Add, SwingConstants.LEADING))
+            contentPanel.add(JLabel(" Consumer (consumes dependencies)", AllIcons.General.Locate, SwingConstants.LEADING))
             contentPanel.add(JLabel("⚠️ = Circular dependency detected"))
             contentPanel.add(Box.createVerticalStrut(10))
 

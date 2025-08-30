@@ -67,6 +67,7 @@ Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for project
 [devkit-url]: https://plugins.jetbrains.com/docs/intellij/plugin-development.html
 
 ---
+
 Plugin based on the [IntelliJ Platform Plugin Template][template].
 
 [template]: https://github.com/JetBrains/intellij-platform-plugin-template

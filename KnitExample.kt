@@ -11,19 +11,19 @@ val di = object {
 }
 
 @Provides
-class User(val name: String) // Producer class
+class User(val name: String)
 
 class UserService(
-    @Provides val userName: String // Producer parameter
+    @Provides val userName: String
 ) {
-    val user: User by di // Consumer - should work (User is provided)
-    val greeting: String by di // Consumer - should work (userName provides String)
+    val user: User by di
+    val greeting: String by di
 }
 
 class DatabaseService(
     @Provides val connection: String
 ) {
-    val userList: List<User> by di // Consumer - should show warning (no List<User> provider)
+    val userList: List<User> by di
 }
 
 @Provides

@@ -61,6 +61,7 @@ class MyToolWindowFactory : ToolWindowFactory {
             contentPanel.add(JLabel("• Gutter icons for quick identification"))
             contentPanel.add(JLabel("• Inspections for missing providers"))
             contentPanel.add(JLabel("• Circular dependency detection & warnings"))
+            contentPanel.add(JLabel("• Unused provider detection with quick fixes"))
             
             add(contentPanel, BorderLayout.CENTER)
         }

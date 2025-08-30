@@ -42,6 +42,13 @@
                          groupName="Knit Dependency Injection"
                          enabledByDefault="true"
                          level="ERROR"/>
+                         
+        <localInspection language="kotlin" 
+                         implementationClass="com.github.ngjackin.knitplugin.inspection.KnitUnusedProviderInspection"
+                         displayName="Knit Unused Providers"
+                         groupName="Knit Dependency Injection"
+                         enabledByDefault="true"
+                         level="WARNING"/>
         
         <!-- Inlay hints with circular dependency warnings -->
         <codeInsight.inlayProvider language="kotlin"

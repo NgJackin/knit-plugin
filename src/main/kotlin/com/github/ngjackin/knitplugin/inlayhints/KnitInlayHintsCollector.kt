@@ -23,15 +23,13 @@ class KnitInlayHintsCollector(editor: Editor) : FactoryInlayHintsCollector(edito
 
     private fun collectProvidesHints(annotation: KtAnnotationEntry, sink: InlayHintsSink) {
         if (annotation.shortName?.asString() == "Provides") {
-            // Check if this provider is part of a circular dependency
+            // Only show hint if this provider is part of a circular dependency
             val isCircular = CircularDependencyAnalyzer.isPartOfCircularDependency(annotation)
             
-            val hint = if (isCircular) {
-                factory.text(" ⚠️ Producer (Circular!)")
-            } else {
-                factory.text(" 🟢 Producer")
+            if (isCircular) {
+                val hint = factory.text(" ⚠️ Producer (Circular!)")
+                sink.addInlineElement(annotation.textRange.endOffset, false, hint, false)
             }
-            sink.addInlineElement(annotation.textRange.endOffset, false, hint, false)
         }
     }
 
@@ -43,15 +41,13 @@ class KnitInlayHintsCollector(editor: Editor) : FactoryInlayHintsCollector(edito
                 val containingClass = property.containingClass()
                 
                 if (propertyType != null && containingClass != null) {
-                    val hasProvider = hasProviderForType(containingClass, propertyType)
                     val isCircular = CircularDependencyAnalyzer.isPartOfCircularDependency(property)
                     
-                    val hint = when {
-                        isCircular -> factory.text(" ⚠️ Circular dependency!")
-                        hasProvider -> factory.text(" 🔵 Injected")
-                        else -> factory.text(" ❌ No provider")
+                    // Only show hint for circular dependencies
+                    if (isCircular) {
+                        val hint = factory.text(" ⚠️ Circular dependency!")
+                        sink.addInlineElement(delegateExpression.textRange.endOffset, false, hint, false)
                     }
-                    sink.addInlineElement(delegateExpression.textRange.endOffset, false, hint, false)
                 }
             }
         }
@@ -62,33 +58,29 @@ class KnitInlayHintsCollector(editor: Editor) : FactoryInlayHintsCollector(edito
         if (hasProvides) {
             val nameIdentifier = ktClass.nameIdentifier
             if (nameIdentifier != null) {
-                // Check if this class is part of a circular dependency
+                // Only show hint if this class is part of a circular dependency
                 val isCircular = CircularDependencyAnalyzer.isPartOfCircularDependency(ktClass)
                 
-                val hint = if (isCircular) {
-                    factory.text(" ⚠️ Injectable (Circular!)")
-                } else {
-                    factory.text(" 🏭 Injectable")
+                if (isCircular) {
+                    val hint = factory.text(" ⚠️ Injectable (Circular!)")
+                    sink.addInlineElement(nameIdentifier.textRange.endOffset, false, hint, false)
                 }
-                sink.addInlineElement(nameIdentifier.textRange.endOffset, false, hint, false)
             }
         }
 
-        // Add hints for constructor parameters with @Provides
+        // Add hints for constructor parameters with @Provides (only for circular dependencies)
         ktClass.primaryConstructor?.valueParameters?.forEach { parameter ->
             val hasProvides = parameter.annotationEntries.any { it.shortName?.asString() == "Provides" }
             if (hasProvides) {
                 val nameIdentifier = parameter.nameIdentifier
                 if (nameIdentifier != null) {
-                    // Check if this parameter is part of a circular dependency
+                    // Only show hint if this parameter is part of a circular dependency
                     val isCircular = CircularDependencyAnalyzer.isPartOfCircularDependency(parameter)
                     
-                    val hint = if (isCircular) {
-                        factory.text(" ⚠️ Provides (Circular!)")
-                    } else {
-                        factory.text(" 🔧 Provides")
+                    if (isCircular) {
+                        val hint = factory.text(" ⚠️ Provides (Circular!)")
+                        sink.addInlineElement(nameIdentifier.textRange.endOffset, false, hint, false)
                     }
-                    sink.addInlineElement(nameIdentifier.textRange.endOffset, false, hint, false)
                 }
             }
         }

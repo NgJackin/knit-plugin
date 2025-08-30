@@ -116,19 +116,8 @@ object CircularDependencyAnalyzer {
                 DependencyNode(normalizedClassName, ktClass)
             }
             
-            // Add dependencies from constructor parameters
-            ktClass.primaryConstructor?.valueParameters?.forEach { param ->
-                val paramType = param.typeReference?.text
-                if (paramType != null) {
-                    val normalizedParamType = normalizeType(paramType)
-                    classNode.dependencies.add(normalizedParamType)
-                    
-                    // Ensure the dependency type has a node (even if empty)
-                    nodes.putIfAbsent(normalizedParamType, DependencyNode(normalizedParamType, param))
-                }
-            }
-            
-            // Add dependencies from injected properties (by di)
+            // Only add dependencies from injected properties (by di) - NOT constructor parameters
+            // Constructor parameters are not dependencies unless they're also injected elsewhere
             PsiTreeUtil.findChildrenOfType(ktClass, KtProperty::class.java).forEach { property ->
                 if (isInjectedProperty(property)) {
                     val propertyType = property.typeReference?.text

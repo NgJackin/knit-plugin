@@ -2,7 +2,7 @@
 
 ## Table of Contents
 - [Description](#description)
-- [Installation](#installation)
+- [Installation](#build-and-installation)
 - [Current Features](#current-features)
 - [Planned Features for Future Releases](#planned-features-for-future-releases)
 - [Tools and Libraries Used](#tools-and-libraries-used)

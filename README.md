@@ -10,39 +10,32 @@
 ## Description
 Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for projects using the Knit Dependency Injection (DI) framework. It offers features such as inline annotations, automatic detection of new files and classes, and circular dependency detection to help developers manage their dependencies more effectively.
 
-## Installation
+## Build and Installation
 
-- Using the IDE built-in plugin system:
-  
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "knit-plugin"</kbd> >
-  <kbd>Install</kbd>
-  
-- Using JetBrains Marketplace:
+- Build the Plugin using Gradle with the command: `./gradlew buildPlugin` from the project root directory.
+- After building, the plugin ZIP file can be found in `build/distributions/`.
 
-  Go to [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID) and install it by clicking the <kbd>Install to ...</kbd> button in case your IDE is running.
+- Install the plugin manually using
+  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd> and selecting the plugin's ZIP file (do not extract the ZIP).
 
-  You can also download the [latest release](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID/versions) from JetBrains Marketplace and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+### Running without Building
 
-- Manually:
-
-  Download the [latest release](https://github.com/NgJackin/knit-plugin/releases/latest) and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+- Click on the Run Plugin Button on the top right of the IDE window to launch a new instance of the IDE with the plugin enabled.
 
 
 ## Current Features
 
 ### Inline Annotation
-- Providers and Injections will be annotated inline in the editor and have their own gutter icons for easy identification.
-- Injections will be annotated with the provider's class name and package so that the Provider can be easily located and verified.
+- Providers and Injections have their own gutter icons for easy identification.
+- More information about Providers / Injections will be shown when hovering over / clicking the gutter icon.
+- Warnings will be have their own inline annotations to alert the user of potential issues.
 
 ### Automatic Detection of New Files and Classes
 - Our plugin will automatically detect new files and classes, ensuring that DIs in the project is kept track of without any manual intervention.
 
 ### Circular Dependency Detection
 - Provider and Injections will be stored and analysed to detect any circular dependencies which will cause runtime errors. 
-- Providers / Injections involved in circular dependencies will be highlighted in the editor to alert the user.
-
+- Providers / Injections involved in circular dependencies will have inline annotations in the editor to alert the user.
 
 ## Planned Features for Future Releases
 

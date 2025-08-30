@@ -13,15 +13,13 @@
         <toolWindow factoryClass="com.github.ngjackin.knitplugin.toolWindow.MyToolWindowFactory" id="KnitDI"/>
         <postStartupActivity implementation="com.github.ngjackin.knitplugin.startup.MyProjectActivity" />
         
-        <!-- Knit DI Plugin Extensions -->
-        <annotator language="kotlin" implementationClass="com.github.ngjackin.knitplugin.annotator.KnitAnnotator"/>
-        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="com.github.ngjackin.knitplugin.markers.KnitLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="com.github.ngjackin.knitplugin.debug.DebugLineMarkerProvider"/>
-        <localInspection language="kotlin" 
-                         displayName="Knit Dependency Injection Issues" 
-                         groupName="Knit" 
-                         enabledByDefault="true"
-                         level="WARNING"
-                         implementationClass="com.github.ngjackin.knitplugin.inspection.KnitDependencyInspection"/>
+        <!-- Knit DI Plugin Extensions - With Navigation -->
+        
+        <!-- Navigation and Documentation -->
+        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="com.github.ngjackin.knitplugin.markers.KnitNavigationLineMarkerProvider"/>
+        <lang.documentationProvider language="kotlin" implementationClass="com.github.ngjackin.knitplugin.documentation.KnitDocumentationProvider"/>
+        
+        <!-- Basic highlighting (K2-compatible) -->
+        <annotator language="kotlin" implementationClass="com.github.ngjackin.knitplugin.annotator.KnitTextBasedAnnotator"/>
     </extensions>
 </idea-plugin>

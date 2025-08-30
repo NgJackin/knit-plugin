@@ -1,4 +1,4 @@
-# knit-plugin
+# Knit Grass
 
 ## Table of Contents
 - [Description](#description)
@@ -8,19 +8,20 @@
 - [Tools and Libraries Used](#tools-and-libraries-used)
 
 ## Description
-Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for projects using the Knit Dependency Injection (DI) framework. It offers features such as inline warnings, automatic detection of new files and classes, and circular dependency detection to help developers manage their dependencies more effectively.
+Knit Grass is a JetBrains IDE plugin that provides enhanced support for projects using the Knit Dependency Injection (DI) framework. It offers features such as inline warnings, refactoring support, and circular dependency detection to help developers manage their dependencies more effectively.
 
 ## Build and Installation
 
+- **IMPORTANT: Disabling K2 mode**
+1. Open Settings/Preferences: Go to File > Settings (on Windows/Linux) or IntelliJ IDEA > Preferences (on macOS).
+2. Navigate to Kotlin settings: In the Settings/Preferences dialog, navigate to Languages & Frameworks > Kotlin.
+3. Disable K2 mode: Locate the Enable K2 mode checkbox and deselect it.
+4. Apply changes: Click Apply and then OK to save the changes and close the dialog.
+
 - Build the Plugin using Gradle with the command: `./gradlew buildPlugin` from the project root directory.
 - After building, the plugin ZIP file can be found in `build/distributions/`.
-
 - Install the plugin manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd> and selecting the plugin's ZIP file (do not extract the ZIP).
-
-### Running without Building
-
-- Click on the Run Plugin Button on the top right of the IDE window to launch a new instance of the IDE with the plugin enabled.
 
 
 ## Current Features
@@ -32,8 +33,10 @@ Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for project
   - Clicking an Injection's gutter icon will navigate to the corresponding Provider.
 - Warnings will be have their own inline annotations to alert the user of potential issues.
 
-### Automatic Detection of New Files and Classes
-- Our plugin will automatically detect new files and classes, ensuring that DIs in the project is kept track of without any manual intervention.
+### Refactoring Support
+- Fixes for common DI issues (missing providers, unused providers)
+- Automatically generates a placeholder provider in the case of missing providers.
+- Allows for removal of annotations or deletes the class for unused providers.
 
 ### Circular Dependency Detection
 - Provider and Injections will be stored and analysed to detect any circular dependencies which will cause runtime errors. 
@@ -41,14 +44,20 @@ Knit-Plugin is a JetBrains IDE plugin that provides enhanced support for project
 
 ## Planned Features for Future Releases
 
+### Support for all Knit annotations
+- The current version only supports `@Provides` and `by di`.
+- Support for more advanced usages, for annotations such as `@Singleton`, `@Component` etc.
+
 ### Dependency Graph Visualization
 - Visualize the dependency graph of Providers and Injections in the project.
 - Allow users to interact with the graph to explore dependencies and identify potential issues.
 
-### Refactoring Support
-- Automatic refactoring for Providers and Injections when Providers are renamed or updated.
-- Ensure that users will be prompted to remove all affected Injections when Providers are deleted.
-- Other refactoring features to resolve common errors related to Providers and Injections (e.g. injecting a private provider in a different class).
+### Additional Refactoring Support
+- **Quick fixes** for a wider variety of DI issues ( scope mismatches)
+- **Auto-import** suggestions for Knit annotations
+- **Extract to provider** refactoring for repeated dependency patterns
+- **Bulk operations** for updating multiple providers at once
+
 
 
 ## Tools and Libraries Used
